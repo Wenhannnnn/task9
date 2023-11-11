@@ -1,12 +1,13 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetParameter
 import xacro
 
 
 def generate_launch_description():
     ld = LaunchDescription()
+    
 
     # Specify the name of the package and path to xacro file within the package
     pkg_name = 'gz_example_robot_description'
@@ -44,6 +45,7 @@ def generate_launch_description():
 
 
     # Add actions to LaunchDescription
+    ld.add_action(SetParameter(name='use_sim_time', value=False))
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_joint_state_publisher)
     ld.add_action(node_rviz)
