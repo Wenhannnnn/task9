@@ -11,7 +11,7 @@ def generate_launch_description():
 
     # Specify the name of the package and path to xacro file within the package
     pkg_name = 'gz_example_robot_description'
-    file_subpath = 'urdf/diff_drive.urdf'
+    file_subpath = 'urdf/diff_drive_simulation.urdf'
 
 
     # Use xacro to process the file
