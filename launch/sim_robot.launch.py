@@ -41,15 +41,17 @@ def generate_launch_description():
         output='screen',
         parameters=[{'robot_description': robot_description_raw}] # add other parameters here if required
     )
-    # # Bridge
-    # node_ros_gz_bridge = Node(
-    #     package='ros_gz_bridge',
-    #     executable='parameter_bridge',
-    #     arguments=['/gz_example_robot/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
-    #                '/gz_example_robot/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry'],
-    #     parameters=[{'qos_overrides./gz_example_robot.subscriber.reliability': 'reliable'}],
-    #     output='screen'
-    # )
+    # Bridge
+    node_ros_gz_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/model/gz_example_robot/cmd_vel' + '@geometry_msgs/msg/Twist' + '@' + 'ignition.msgs.Twist',
+                   '/model/gz_example_robot/odometry' + '@nav_msgs/msg/Odometry' + '[' + 'ignition.msgs.Odometry',
+                  ],
+        parameters=[{'qos_overrides./gz_example_robot.subscriber.reliability': 'reliable'}],
+        remappings=[('/model/gz_example_robot/cmd_vel', '/cmd_vel'),('/model/gz_example_robot/cmd_vel', 'odom')],
+        output='screen'
+    )
 
     # # joint state publisher node
     # node_joint_state_publisher = Node(
@@ -73,7 +75,7 @@ def generate_launch_description():
     ld.add_action(launch_gazebo)
     ld.add_action(node_spawn_entity)
     ld.add_action(node_robot_state_publisher)
-    # ld.add_action(node_ros_gz_bridge)
+    ld.add_action(node_ros_gz_bridge)
     # ld.add_action(node_joint_state_publisher)
     # ld.add_action(node_rviz)
     return ld
