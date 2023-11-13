@@ -42,14 +42,28 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description_raw}] # add other parameters here if required
     )
     # Bridge
+    # https://github.com/gazebosim/ros_gz/tree/humble/ros_gz_bridge
     node_ros_gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/model/gz_example_robot/cmd_vel' + '@geometry_msgs/msg/Twist' + '@' + 'ignition.msgs.Twist',
-                   '/model/gz_example_robot/odometry' + '@nav_msgs/msg/Odometry' + '[' + 'ignition.msgs.Odometry',
-                  ],
-        parameters=[{'qos_overrides./gz_example_robot.subscriber.reliability': 'reliable'}],
-        remappings=[('/model/gz_example_robot/cmd_vel', '/cmd_vel'),('/model/gz_example_robot/cmd_vel', 'odom')],
+        arguments=  [
+                    '/clock'                           + '@rosgraph_msgs/msg/Clock'   + '[' + 'ignition.msgs.Clock',
+                    '/model/gz_example_robot/cmd_vel'  + '@geometry_msgs/msg/Twist'   + '@' + 'ignition.msgs.Twist',
+                    '/model/gz_example_robot/odometry' + '@nav_msgs/msg/Odometry'     + '[' + 'ignition.msgs.Odometry',
+                    '/model/gz_example_robot/scan'     + '@sensor_msgs/msg/LaserScan' + '[' + 'ignition.msgs.LaserScan',
+                    '/model/gz_example_robot/tf'       + '@tf2_msgs/msg/TFMessage' + '[' + 'ignition.msgs.Pose_V',
+                    '/model/gz_example_robot/imu'      + '@sensor_msgs/msg/Imu'       + '[' + 'ignition.msgs.IMU',
+                    '/world/empty/model/gz_example_robot/joint_state' + '@sensor_msgs/msg/JointState' + '[' + 'ignition.msgs.Model',
+                    ],
+        parameters= [{'qos_overrides./gz_example_robot.subscriber.reliability': 'reliable'}],
+        remappings= [
+                    ('/model/gz_example_robot/cmd_vel',  '/cmd_vel'),
+                    ('/model/gz_example_robot/odometry', '/odom'   ),
+                    ('/model/gz_example_robot/scan',     '/scan'   ),
+                    ('/model/gz_example_robot/tf',       '/tf'     ),
+                    ('/model/gz_example_robot/imu',      '/imu_raw'),
+                    ('/world/empty/model/gz_example_robot/joint_state', 'joint_states')
+                    ],
         output='screen'
     )
 
@@ -60,14 +74,14 @@ def generate_launch_description():
     #     name='joint_state_publisher',
     # )
 
-    # # Rviz node
-    # node_rviz = Node(
-    #     package='rviz2',
-    #     namespace='',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     arguments=['-d' + os.path.join(get_package_share_directory(pkg_name), 'rviz', 'view_model.rviz')]
-    # )
+    # Rviz node
+    node_rviz = Node(
+        package='rviz2',
+        namespace='',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d' + os.path.join(get_package_share_directory(pkg_name), 'rviz', 'view_model.rviz')]
+    )
 
 
     # Add actions to LaunchDescription
@@ -77,5 +91,5 @@ def generate_launch_description():
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_ros_gz_bridge)
     # ld.add_action(node_joint_state_publisher)
-    # ld.add_action(node_rviz)
+    ld.add_action(node_rviz)
     return ld

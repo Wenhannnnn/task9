@@ -22,6 +22,8 @@ setup(
         (os.path.join('share', package_name, 'meshes'), glob(os.path.join('meshes', '*'))),
         # Include world (.sdf) files
         (os.path.join('share', package_name, 'worlds'), glob(os.path.join('worlds', '*.sdf'))),
+        # Include config (.yaml) files
+        (os.path.join('share', package_name, 'config'), glob(os.path.join('config', '*.yaml'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

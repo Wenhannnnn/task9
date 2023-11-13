@@ -171,12 +171,8 @@
 
 
   <!-- GAZEBO PLUGINS -->
-  <gazebo reference="base_link">
+  <gazebo>
     <plugin filename="ignition-gazebo-diff-drive-system" name="ignition::gazebo::systems::DiffDrive">
-      <ros>
-        <namespace></namespace>
-      </ros>
-
       <!-- wheels -->
       <left_joint>left_wheel_joint</left_joint>
       <right_joint>right_wheel_joint</right_joint>
@@ -186,16 +182,22 @@
       <wheel_diameter>0.16</wheel_diameter>
 
       <!-- limits -->	
-      <max_wheel_torque>20</max_wheel_torque>
-      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      <max_wheel_torque>10</max_wheel_torque>
+      <max_wheel_acceleration>0.5</max_wheel_acceleration>
 
-      <!-- output -->
+      <!-- TF options -->
       <publish_odom>true</publish_odom>
-      <publish_odom_tf>false</publish_odom_tf>
       <publish_wheel_tf>true</publish_wheel_tf>
+      <publish_odom_tf>true</publish_odom_tf>
 
+      <!-- odometry -->      
       <odometry_frame>odom</odometry_frame>
+      <odom_topic>/model/gz_example_robot/odometry</odom_topic>
+      
+      <!-- cmd velocity -->
       <robot_base_frame>base_link</robot_base_frame>
+      <topic>/model/gz_example_robot/cmd_vel</topic>
+      
     </plugin>
   </gazebo>
 
