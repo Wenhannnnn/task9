@@ -14,7 +14,7 @@ Remember to add directories to your "setup.py" file.  To start with, we will add
 ```bash
 cd ~/YOUR_ROS_WS/src
 ros2 pkg create gz_example_robot_description --build-type ament_python
-cd gz_example_robot
+cd gz_example_robot_description
 mkdir launch
 mkdir worlds
 ```
@@ -22,6 +22,9 @@ mkdir worlds
 Then modify the "data_files" portion of _setup.py_ file with the following:
 
 ```python
+    import os
+    from glob import glob
+
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -60,7 +63,7 @@ Create a launch file called _sim_robot.launch.py_ in the launch directory.  It s
 ```python
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
 from launch_ros.actions import SetParameter
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -68,7 +71,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     ld = LaunchDescription()
 
-    pkg_name = 'gz_example_robot_description
+    pkg_name = 'gz_example_robot_description'
 
     # Set ignition resource path (so it can find your world files)
     ign_resource_path = SetEnvironmentVariable(name='IGN_GAZEBO_RESOURCE_PATH',
@@ -84,10 +87,11 @@ def generate_launch_description():
 
     # Add actions to LaunchDescription
     ld.add_action(SetParameter(name='use_sim_time', value=True))
+    ld.add_action(ign_resource_path) # Please put this before gazebo
     ld.add_action(launch_gazebo)
     return ld
 ```
-In theory is it possible to pass the world file (MYWORLD.sdf) as an argument (with a default value) but we will skip that here to avoid any confusion and just hardcode it in.
+In theory is it possible to pass the world file (MYWORLD.sdf) as an argument (with a default value) but we will skip that here to avoid any confusion and just hardcode it in.  If you don't have a world file, I would recommend just using "empty.sdf".
 
 Don't forget to colon build and source!
 
@@ -407,8 +411,16 @@ Now we are cooking, let's get the model in Gazebo.  Add these additional lines t
 
 
     # Use xacro to process the file
-    xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath)
+    xacro_file = os.path.join(get_package_share_directory(pkg_name),file_subpath) # This line should already be in the launch file
     robot_description_raw = xacro.process_file(xacro_file).toxml()
+
+    # robot state publisher node
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{'robot_description': robot_description_raw}] # add other parameters here if required
+    )
 
     # Run the spawner node from the ros_gz_sim package - this will hold up with new gazebo versions
     node_spawn_entity = Node(package='ros_gz_sim', executable='create',
@@ -426,8 +438,9 @@ Now we are cooking, let's get the model in Gazebo.  Add these additional lines t
         arguments=['-d' + os.path.join(get_package_share_directory(pkg_name), 'rviz', 'view_model.rviz')]
     )
 
-    # OTHER ld.add_action()
+    # OTHER ld.add_action() e.g. ign_resource_path
     # ...
+    ld.add_action(node_robot_state_publisher)
     ld.add_action(node_spawn_entity)
     ld.add_action(node_rviz)
     return ld

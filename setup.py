@@ -16,14 +16,16 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))),
         # Include URDF (.urdf) files
         (os.path.join('share', package_name, 'urdf'), glob(os.path.join('urdf', '*.urdf*'))),
+        # Include model (.stl) files
+        (os.path.join('share', package_name, 'models'), glob(os.path.join('models', '*.[sd][ta][le]'))),
         # Include rviz (.rviz) files
         (os.path.join('share', package_name, 'rviz'), glob(os.path.join('rviz', '*.rviz'))),
-        # Include mesh directory
-        (os.path.join('share', package_name, 'meshes'), glob(os.path.join('meshes', '*'))),
-        # Include world (.sdf) files
-        (os.path.join('share', package_name, 'worlds'), glob(os.path.join('worlds', '*.sdf'))),
+        # Include world (.sdf or dae) files
+        (os.path.join('share', package_name, 'worlds'), glob(os.path.join('worlds', '**/**.[sd][da][fe]'), recursive=True)),
         # Include config (.yaml) files
         (os.path.join('share', package_name, 'config'), glob(os.path.join('config', '*.yaml'))),
+	# Include map (.yaml and .pgm) files
+        (os.path.join('share', package_name, 'maps'), glob(os.path.join('maps', '*.[yp][ag][m]'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
