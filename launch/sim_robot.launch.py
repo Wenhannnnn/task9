@@ -15,6 +15,7 @@ def generate_launch_description():
 
     # Specify the name of the package and path to xacro file within the package
     pkg_name = 'gz_example_robot_description'
+
     file_subpath = 'urdf/leo_sim.urdf.xacro'
 
     # Set ignition resource path (so it can find your world files)
@@ -83,6 +84,7 @@ def generate_launch_description():
                     "/imu/data_raw@sensor_msgs/msg/Imu[ignition.msgs.IMU",
                     "/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
                     "/joint_states@sensor_msgs/msg/JointState[ignition.msgs.Model",
+
             ],
         parameters= [{
                     "qos_overrides./tf_static.publisher.durability": "transient_local",
@@ -98,12 +100,12 @@ def generate_launch_description():
         arguments=["/camera/image_raw"],
         output="screen",
     )
-    # # joint state publisher node
-    # node_joint_state_publisher = Node(
-    #     package='joint_state_publisher',
-    #     executable='joint_state_publisher',
-    #     name='joint_state_publisher',
-    # )
+    # joint state publisher node
+    node_joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+    )
 
     # Rviz node
     node_rviz = Node(
@@ -122,6 +124,8 @@ def generate_launch_description():
     ld.add_action(launch_gazebo)
     ld.add_action(gz_spawn_objects)
     ld.add_action(node_spawn_entity)
+    #Add joint state pulisher
+    #ld.add_action(node_joint_state_publisher)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(node_ros_gz_bridge)
     ld.add_action(image_bridge)
