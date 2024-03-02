@@ -80,6 +80,7 @@ def generate_launch_description():
                     "/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock",
                     "/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist",
                     "/odom@nav_msgs/msg/Odometry[ignition.msgs.Odometry",
+                    "/lidar/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan",
                     "/tf@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V",
                     "/imu/data_raw@sensor_msgs/msg/Imu[ignition.msgs.IMU",
                     "/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo",
@@ -113,7 +114,7 @@ def generate_launch_description():
         namespace='',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d' + os.path.join(get_package_share_directory(pkg_name), 'rviz', 'view_model.rviz')]
+        arguments=['-d' + os.path.join(get_package_share_directory(pkg_name), 'rviz', 'nav2.rviz')]
     )
 
 
